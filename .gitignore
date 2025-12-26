@@ -1,0 +1,73 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+pip-wheel-metadata/
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+.env/
+.env.*
+
+# Pytest / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDEs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs and temporary files
+*.log
+*.tmp
+*.bak
+
+# Data outputs and generated artifacts (keep source/demo data)
+data/data_output/
+# Keep data_demo under version control
+!data/data_demo/
+
+# Tools outputs
+tools/*.npy
+
+# Documentation build
+docs/_build/
+
+# Misc
+*.egg
+*.whl
+.pip-log
+coverage.xml
+
+# Editor swap files
+*~
+*.swp
+
+# Ignore local machine-specific secrets (if any)
+.secrets/
+
+# Local workspace (optional)
+.local/

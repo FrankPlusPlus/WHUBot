@@ -1,0 +1,20 @@
+# Configuration for research2 trajectory generation
+text_string: "0283YZT"
+font_size: 80
+# Optional: font path (if not provided, PIL default font will be used)
+# font_path: 
+# font_path: "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+font_path: null
+image_size: [1000, 400]
+# Downscale factor applied AFTER rendering to approximate MATLAB screen capture resolution
+# Values <1.0 will resize the rendered image before binarization. Increasing this makes raster details finer
+# (raise for small features that get lost when downscale is small). Set to 0.30 for improved small-stroke fidelity.
+downscale: 0.45
+# Threshold for binarization (0-255). If null, Otsu-like automatic threshold will be used
+threshold: null
+# Interpolation density: number of points per unit distance when connecting contours
+interp_density: 0.5
+z_height: 200
+start_point: [302, 0, 558, 0, 0, 0]
+output_path: "data/output/research2_trajectory_py.csv"
+random_seed: 0

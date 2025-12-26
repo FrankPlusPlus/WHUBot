@@ -1,0 +1,48 @@
+# research1 configuration file
+# Manually specified via points (use X,Y only; Z fixed)
+via_points:
+  - [0.1382, 0.4176]
+  - [0.3618, 0.1098]
+  - [0.3618, 0.4902]
+  - [0.1382, 0.1824]
+  - [0.5000, 0.3000]
+# Fixed end-effector Z height
+end_effector_z: 0.3
+
+
+# Time / sampling settings
+dt: 0.05                  # Time step
+samples_per_segment: 40    # Samples per segment (example uses 40 per segment)
+# total_samples = samples_per_segment * (number_of_segments)
+
+
+
+# Default initial joint angles for 6D6R robot (degrees)
+q0_deg: [30.942068, 60.335881, 61.569799, 7.442449, 164.475, 156.482096]
+# Optional: 6D6R robot DH parameters
+robot:
+  d: [0.4, 0.135, 0.135, 0.62, 0.0, 0.0]
+  a: [0.18, 0.6, 0.12, 0.0, 0.0, 0.0]
+  # alpha values in radians
+  alpha: [1.5707963267948966, 3.141592653589793, -1.5707963267948966, 1.5707963267948966, -1.5707963267948966, 0.0]
+
+# Optional: read DH parameters and JVInitial from a robot XML file (if available)
+# - robot_from_xml: true will use parameters from robot_xml_path
+# - robot_xml_path: path to XML file (relative or absolute)
+robot_from_xml: true
+robot_xml_path: "data/robot_xml/6D6R.xml"
+
+
+
+
+
+# 输出文件路径（相对于仓库根目录）
+output_path: "data/output/research1_trajectory_py.csv"
+# 逆运动学与求解器参数
+ik:
+  max_nfev: 200
+  ftol: 1e-8
+  xtol: 1e-8
+
+# 其它可选设置
+random_seed: 0
