@@ -16,6 +16,13 @@ import math
 import os
 import logging
 import sys
+
+# plotting (optional)
+try:
+    import matplotlib.pyplot as plt
+except Exception:
+    plt = None
+    logging.debug('matplotlib not available; plot saving will be disabled')
 # allow importing from src/utils when running as a script
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from utils.robot_utils import Robot, parse_robot_xml
@@ -129,13 +136,94 @@ class TrajectoryGenerator:
             else:
                 logging.warning('JVInitial from XML missing or not length 6; falling back to config q0_deg')
         else:
-            rd = robot_cfg.get('d', None)
+            # Configuration key renaming: prefer 'b' (link offsets) but fall back to 'd' for compatibility
+            rb = robot_cfg.get('b', robot_cfg.get('d', None))
             ra = robot_cfg.get('a', None)
             ralpha = robot_cfg.get('alpha', None)
-            self.robot = Robot(d=rd, a=ra, alpha=ralpha)
+            if 'd' in robot_cfg and 'b' not in robot_cfg:
+                logging.warning("Using deprecated config key 'd'; prefer 'b' for link offsets (will map to Robot.d)")
+            self.robot = Robot(d=rb, a=ra, alpha=ralpha)
         self.random_seed = cfg.get('random_seed', None)
         if self.random_seed is not None:
             np.random.seed(self.random_seed)
+
+        # plotting configuration: optional mapping 'plots' with keys 'displacement','speed','acceleration'
+        plots_cfg = cfg.get('plots', {}) or {}
+        default_plot_dir = os.path.dirname(self.output_path) or os.path.join('data','output')
+        # ensure default dir exists
+        if default_plot_dir and not os.path.exists(default_plot_dir):
+            os.makedirs(default_plot_dir, exist_ok=True)
+        self.plot_paths = {
+            'displacement': plots_cfg.get('displacement', os.path.join(default_plot_dir, 'displacement.png')),
+            'speed': plots_cfg.get('speed', os.path.join(default_plot_dir, 'speed.png')),
+            'acceleration': plots_cfg.get('acceleration', os.path.join(default_plot_dir, 'acceleration.png')),
+        }
+        self.save_plots = bool(cfg.get('save_plots', True))
+
+        # DH table export configuration
+        # 'dh_table_path' : string path to save PNG table (optional)
+        # 'save_dh_table' : bool to control saving (default True)
+        self.dh_table_path = cfg.get('dh_table_path', os.path.join(default_plot_dir, 'dh_table.png'))
+        self.save_dh_table = bool(cfg.get('save_dh_table', True))
+
+        # If requested, save the DH parameter table (b, a, alpha, theta) as PNG
+        def _save_dh_table(path: str):
+            if not self.save_dh_table:
+                logging.debug('DH table saving disabled by config')
+                return
+            if plt is None:
+                logging.warning('matplotlib not available; cannot save DH table %s', path)
+                return
+            try:
+                headers = ['b (m)', 'a (m)', 'alpha (rad)']
+                b_vals = [f'{v:.6f}' for v in self.robot.d]
+                a_vals = [f'{v:.6f}' for v in self.robot.a]
+                alpha_vals = [f'{v:.6f}' for v in self.robot.alpha]
+                cell_text = list(zip(b_vals, a_vals, alpha_vals))
+                fig, ax = plt.subplots(figsize=(8, 2.6))
+                ax.axis('off')
+                # Build table with centered cells and styled header
+                table = ax.table(cellText=cell_text, colLabels=headers, loc='center', cellLoc='center')
+                # ensure reasonable column widths
+                try:
+                    table.auto_set_column_width(col=list(range(len(headers))))
+                except Exception:
+                    pass
+                # style header row
+                ncols = len(headers)
+                nrows = len(cell_text)
+                for col in range(ncols):
+                    cell = table[0, col]
+                    cell.set_text_props(weight='bold', color='white', ha='center', va='center')
+                    cell.set_facecolor('#4f81bd')
+                    cell.set_edgecolor('black')
+                # style data cells
+                for row in range(1, nrows+1):
+                    for col in range(ncols):
+                        c = table[row, col]
+                        c.set_text_props(ha='center', va='center')
+                        c.set_edgecolor('#dddddd')
+                table.auto_set_font_size(False)
+                table.set_fontsize(10)
+                table.scale(1, 1.4)
+                table.auto_set_font_size(False)
+                table.set_fontsize(10)
+                table.scale(1, 1.4)
+                plt.tight_layout()
+                out_dir = os.path.dirname(path)
+                if out_dir and not os.path.exists(out_dir):
+                    os.makedirs(out_dir, exist_ok=True)
+                plt.savefig(path, dpi=150, bbox_inches='tight')
+                plt.close()
+                logging.info('Saved DH parameter table to %s', path)
+            except Exception as e:
+                logging.warning('Failed to save DH table %s: %s', path, e)
+
+        # attempt save now (robot and q0 are available)
+        try:
+            _save_dh_table(self.dh_table_path)
+        except Exception as e:
+            logging.warning('Error while attempting to save DH table: %s', e)
 
         # Saved IK support removed: script now always computes IK from the configured via points
         # (previous config keys like use_saved_ik/save_ik/ik_save_path are no longer used)
@@ -167,6 +255,31 @@ class TrajectoryGenerator:
         # Inverse kinematics
         q_all = np.zeros((total_samples, 6), dtype=float)
         q_all[0,:] = np.deg2rad(self.q0_deg)
+
+        # Helper: save a simple line plot if matplotlib available
+        def _save_plot(x, y, path, title, xlabel, ylabel):
+            if not self.save_plots:
+                logging.debug('plot saving disabled by config')
+                return
+            if plt is None:
+                logging.warning('matplotlib not available; cannot save plot %s', path)
+                return
+            try:
+                plt.figure(figsize=(8,4))
+                plt.plot(x, y, '-b')
+                plt.grid(True)
+                plt.xlabel(xlabel)
+                plt.ylabel(ylabel)
+                plt.title(title)
+                plt.tight_layout()
+                out_dir = os.path.dirname(path)
+                if out_dir and not os.path.exists(out_dir):
+                    os.makedirs(out_dir, exist_ok=True)
+                plt.savefig(path, dpi=150)
+                plt.close()
+                logging.info('Saved plot to %s', path)
+            except Exception as e:
+                logging.warning('Failed to save plot %s: %s', path, e)
 
         # Compute IK for every sample (historical IK loading has been removed)
         for i in range(1, total_samples):
@@ -262,6 +375,22 @@ class TrajectoryGenerator:
                     row.append(0)
                 w.writerow(row)
         logging.info(f"Wrote CSV to {self.output_path} using improved formatting")
+
+        # --- Save time-series plots (displacement, speed, acceleration) if requested ---
+        # time vectors for plotting:
+        # displacement -> time_out (len N)
+        # speed -> time_out[1:] (len N-1)
+        # acceleration -> time_out[2:] (len N-2)
+        try:
+            if self.save_plots:
+                _save_plot(time_out, displacement, self.plot_paths.get('displacement'),
+                           'Displacement vs Time', 'Time (s)', 'Displacement (m)')
+                _save_plot(time_out[1:], speed, self.plot_paths.get('speed'),
+                           'Speed vs Time', 'Time (s)', 'Speed (m/s)')
+                _save_plot(time_out[2:], acceleration, self.plot_paths.get('acceleration'),
+                           'Acceleration vs Time', 'Time (s)', 'Acceleration (m/s^2)')
+        except Exception as e:
+            logging.warning('Exception while saving plots: %s', e)
 
         return {
             'time': time_out,

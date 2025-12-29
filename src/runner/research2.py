@@ -162,6 +162,18 @@ def generate(cfg_path: str) -> str:
     start_point = np.array(cfg.get('start_point', [302, 0, 558, 0, 0, 0]), dtype=float)
     output_path = cfg.get('output_path', 'data/data_output/research2_trajectory_py.csv')
 
+    # Image/preview outputs configuration (optional)
+    images_cfg = cfg.get('images', {}) or {}
+    default_out_dir = os.path.dirname(output_path) or os.path.join('data', 'output')
+    if default_out_dir and not os.path.exists(default_out_dir):
+        os.makedirs(default_out_dir, exist_ok=True)
+    self_save_images = bool(cfg.get('save_images', True))
+    rendered_path = images_cfg.get('rendered', os.path.join(default_out_dir, 'research2_rendered.png'))
+    binary_path = images_cfg.get('binary', os.path.join(default_out_dir, 'research2_binary.png'))
+    contours_path = images_cfg.get('contours', os.path.join(default_out_dir, 'research2_contours.png'))
+    preview_path = images_cfg.get('preview', os.path.join(default_out_dir, 'research2_preview.png'))
+
+
     if font_path is not None and os.path.exists(font_path):
         font = ImageFont.truetype(font_path, font_size)
     else:
@@ -204,6 +216,20 @@ def generate(cfg_path: str) -> str:
     img = Image.fromarray(arr)
     plt.close(fig)
 
+    # --- optional: save rendered image ---
+    def _save_pil(img_obj, path):
+        try:
+            out_dir = os.path.dirname(path)
+            if out_dir and not os.path.exists(out_dir):
+                os.makedirs(out_dir, exist_ok=True)
+            img_obj.save(path)
+            logging.info('Saved image to %s', path)
+        except Exception as e:
+            logging.warning('Failed to save image %s: %s', path, e)
+
+    if self_save_images:
+        _save_pil(img, rendered_path)
+
     # If the final generated image differs in size, optionally rescale to desired image_size
     if (w, h) != image_size:
         img = img.resize(image_size, resample=Image.NEAREST)
@@ -217,6 +243,14 @@ def generate(cfg_path: str) -> str:
 
     # Binarize using the existing Otsu-like function
     bin_img = binarize_image(img, threshold=threshold)
+
+    # save binary mask as image
+    if self_save_images:
+        try:
+            bin_img_vis = Image.fromarray((bin_img * 255).astype('uint8'))
+            _save_pil(bin_img_vis, binary_path)
+        except Exception as e:
+            logging.warning('Failed to save binary image: %s', e)
 
     # Optional: apply small morphological opening to remove thin bridges and restore small holes
     # This helps recover thin inner holes (e.g., 0, 8) without increasing downscale
@@ -283,6 +317,22 @@ def generate(cfg_path: str) -> str:
         if len(contours) == 0:
             raise RuntimeError('No contours found in binary image (after moore_boundary_tracing)')
 
+    # Optional: save contours overlay on rendered image
+    if self_save_images:
+        try:
+            fig, ax = plt.subplots(figsize=(image_size[0]/100, image_size[1]/100), dpi=100)
+            ax.imshow(np.array(img))
+            for ct in contours:
+                ax.plot(ct[:,1], ct[:,0], '-r', linewidth=1)
+            ax.axis('off')
+            out_dir = os.path.dirname(contours_path)
+            if out_dir and not os.path.exists(out_dir):
+                os.makedirs(out_dir, exist_ok=True)
+            fig.savefig(contours_path, bbox_inches='tight', pad_inches=0, dpi=150)
+            plt.close(fig)
+            logging.info('Saved contours overlay to %s', contours_path)
+        except Exception as e:
+            logging.warning('Failed to save contours overlay: %s', e)
 
     # --- Improve contour ordering and add travel lift to avoid drawing travel moves ---
     # center columns using all contours then sort contours left-to-right so glyphs are traced in reading order
@@ -624,6 +674,26 @@ def generate(cfg_path: str) -> str:
 
     # convert to output format: (x=row, y=col_centered, z, 0,0,0)
     out = np.hstack((out3, np.zeros((out3.shape[0], 3))))
+
+    # Optional: save trajectory preview overlayed on rendered image
+    if self_save_images:
+        try:
+            fig, ax = plt.subplots(figsize=(image_size[0]/100, image_size[1]/100), dpi=100)
+            ax.imshow(np.array(img))
+            # reconstruct image-space columns by adding back col_center
+            pts = np.array(out3)
+            xs = pts[:,1] + col_center
+            ys = pts[:,0]
+            ax.plot(xs, ys, '-c', linewidth=0.8)
+            ax.axis('off')
+            out_dir = os.path.dirname(preview_path)
+            if out_dir and not os.path.exists(out_dir):
+                os.makedirs(out_dir, exist_ok=True)
+            fig.savefig(preview_path, bbox_inches='tight', pad_inches=0, dpi=150)
+            plt.close(fig)
+            logging.info('Saved trajectory preview to %s', preview_path)
+        except Exception as e:
+            logging.warning('Failed to save trajectory preview: %s', e)
 
     out_dir = os.path.dirname(output_path)
     if out_dir and not os.path.exists(out_dir):

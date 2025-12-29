@@ -21,7 +21,7 @@ samples_per_segment: 40    # Samples per segment (example uses 40 per segment)
 q0_deg: [30.942068, 60.335881, 61.569799, 7.442449, 164.475, 156.482096]
 # Optional: 6D6R robot DH parameters
 robot:
-  d: [0.4, 0.135, 0.135, 0.62, 0.0, 0.0]
+  b: [0.4, 0.135, 0.135, 0.62, 0.0, 0.0]  # link offsets (config key 'b' maps to Robot.d)
   a: [0.18, 0.6, 0.12, 0.0, 0.0, 0.0]
   # alpha values in radians
   alpha: [1.5707963267948966, 3.141592653589793, -1.5707963267948966, 1.5707963267948966, -1.5707963267948966, 0.0]
@@ -33,16 +33,23 @@ robot_from_xml: true
 robot_xml_path: "data/robot_xml/6D6R.xml"
 
 
+plots:
+  displacement: data/output/research1/displacement.png
+  speed: data/output/research1/speed.png
+  acceleration: data/output/research1/acceleration.png
+save_plots: true  # Optional, set to false to disable saving plots
 
+# DH table export (optional)
+save_dh_table: true                    # set false to disable saving DH table PNG
+dh_table_path: data/output/research1/dh_table.png
 
-
-# 输出文件路径（相对于仓库根目录）
-output_path: "data/output/research1_trajectory_py.csv"
-# 逆运动学与求解器参数
+# Output settings
+output_path: "data/output/research1/research1_trajectory_py.csv"
+# Inverse kinematics parameters for SciPy solver
 ik:
   max_nfev: 200
   ftol: 1e-8
   xtol: 1e-8
 
-# 其它可选设置
+# other
 random_seed: 0

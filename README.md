@@ -30,6 +30,24 @@ python src/runner/research2.py --config configs/research2_config.yaml
 
 运行后会在控制台输出日志，出现错误时检查配置文件中字体路径、渲染 DPI 等参数。
 
+## ▶️ 示例演示（可视化回放）
+
+<p style="text-align:center; margin:12px 0;">
+  <strong>Research1（轨迹与DH验证示例）</strong><br>
+  <a href="docs/video/research1.mp4" style="display:inline-block; margin-top:8px;">
+    <img src="docs/video/research1.gif" alt="research1 demo" style="width:95%; max-width:1200px; height:auto; border:1px solid #e6e6e6; box-shadow:0 4px 18px rgba(0,0,0,0.12);">
+  </a>
+</p>
+
+<p style="text-align:center; margin:12px 0;">
+  <strong>Research2（文本→轮廓→轨迹）</strong><br>
+  <a href="docs/video/research2.mp4" style="display:inline-block; margin-top:8px;">
+    <img src="docs/video/research2.gif" alt="research2 demo" style="width:95%; max-width:1200px; height:auto; border:1px solid #e6e6e6; box-shadow:0 4px 18px rgba(0,0,0,0.12);">
+  </a>
+</p>
+
+
+
 ## 📤 4. 输出说明
 - 默认输出路径：`data/data_output/`。
 - 常见输出文件：

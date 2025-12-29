@@ -16,5 +16,13 @@ threshold: null
 interp_density: 0.5
 z_height: 200
 start_point: [302, 0, 558, 0, 0, 0]
-output_path: "data/output/research2_trajectory_py.csv"
+output_path: "data/output/research2/research2_trajectory_py.csv"
 random_seed: 0
+
+# Optional: save intermediate rendered outputs (rendered image, binary mask, contours overlay, trajectory preview)
+save_images: true
+images:
+  rendered: data/output/research2/research2_rendered.png
+  binary: data/output/research2/research2_binary.png
+  contours: data/output/research2/research2_contours.png
+  preview: data/output/research2/research2_preview.png
