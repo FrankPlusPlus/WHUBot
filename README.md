@@ -34,18 +34,16 @@ python src/runner/research2.py --config configs/research2_config.yaml
 
 <div style="display:flex; flex-wrap:wrap; gap:20px; justify-content:center; align-items:flex-start; margin:12px 0;">
   <figure style="flex:1 1 420px; max-width:560px; text-align:center; margin:0;">
-    <a href="docs/video/research1.mp4" style="display:inline-block; position:relative; width:100%;">
+    <div style="width:100%;">
       <img src="docs/video/research1.gif" alt="research1 demo" style="width:100%; height:auto; border-radius:8px; border:1px solid #e6e6e6; box-shadow:0 6px 20px rgba(0,0,0,0.12); display:block;">
-      <span style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(0,0,0,0.5); color:#fff; font-size:28px; padding:12px 14px; border-radius:50%;">▶</span>
-    </a>
+    </div>
     <figcaption style="margin-top:8px; font-size:0.95em; color:#333;"><strong>Research1</strong><br><span style="color:#666; font-size:0.9em;">轨迹与 DH 验证示例</span></figcaption>
   </figure>
 
   <figure style="flex:1 1 420px; max-width:560px; text-align:center; margin:0;">
-    <a href="docs/video/research2.mp4" style="display:inline-block; position:relative; width:100%;">
+    <div style="width:100%;">
       <img src="docs/video/research2.gif" alt="research2 demo" style="width:100%; height:auto; border-radius:8px; border:1px solid #e6e6e6; box-shadow:0 6px 20px rgba(0,0,0,0.12); display:block;">
-      <span style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(0,0,0,0.5); color:#fff; font-size:28px; padding:12px 14px; border-radius:50%;">▶</span>
-    </a>
+    </div>
     <figcaption style="margin-top:8px; font-size:0.95em; color:#333;"><strong>Research2</strong><br><span style="color:#666; font-size:0.9em;">文本→轮廓→轨迹流程</span></figcaption>
   </figure>
 </div>
