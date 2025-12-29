@@ -162,14 +162,12 @@ save_plots: true  # 可选，设置为 false 则不保存图像
 - 速度使用 `t[1:]`（长度 N-1），
 - 加速度使用 `t[2:]`（长度 N-2）。
 
-### 仿真演示视频
+### 仿真演示结果（静态截图）
 
-下面为关节轨迹的仿真演示（如预览器不支持内嵌视频，请直接打开 `docs/source/research1.mp4`）：
-
-<video controls width="640" poster="./source/research1_poster.png">
-  <source src="./source/research1.mp4" type="video/mp4">
-  您的浏览器不支持视频标签，请直接打开 `docs/source/research1.mp4`。
-</video>
+<div align="center">
+  <img src="picture/research1/result1.png" alt="Research1 result" style="max-width:90%; height:auto; border:1px solid #e6e6e6; box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+  <div style="font-size:0.95em; color:#333; margin-top:6px;"><strong>示例仿真结果（Research1）</strong> — 以静态截图展示仿真回放中的关键帧用于结果验证。</div>
+</div>
 
 ---
 

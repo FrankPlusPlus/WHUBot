@@ -131,12 +131,10 @@
 - 本方法在合理参数下能稳定生成并仿真字符轨迹；虚拟仿真可用于验证可达性与轨迹连续性；
 - 在转入真实机械臂执行前，务必增加速度/加速度限制、碰撞检测和局部手动校验（尤其是高曲率或窄缝区域）。
 
-<p style="text-align:center; margin:14px 6px;">
-  <video src="docs/video/research2.mp4" controls style="max-width:85%; height:auto; border:1px solid #e6e6e6; box-shadow:0 2px 8px rgba(0,0,0,0.06);">
-    您的浏览器不支持 video 标签，请直接打开 <a href="docs/video/research2.mp4">docs/video/research2.mp4</a> 观看。
-  </video>
-  <div style="font-size:0.95em; color:#555; margin-top:6px;">示例仿真视频：在 Virtual robots 中对导出轨迹的执行回放（用于目视验证轨迹连通性与抬升动作）。</div>
-</p>
+<div style="text-align:center; margin:14px 6px;">
+  <img src="picture/research2/result2.png" alt="Research2 result" style="max-width:90%; height:auto; border:1px solid #e6e6e6; box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+  <div style="font-size:0.95em; color:#333; margin-top:6px;"><strong>示例仿真结果（Research2）</strong> — 以静态截图展示仿真回放中的关键帧用于结果验证。</div>
+</div>
 
 ---
 
