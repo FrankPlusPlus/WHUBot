@@ -37,14 +37,14 @@ python src/runner/research2.py --config configs/research2_config.yaml
     <div style="width:100%;">
       <img src="docs/video/research1.gif" alt="research1 demo" style="width:100%; height:auto; border-radius:8px; border:1px solid #e6e6e6; box-shadow:0 6px 20px rgba(0,0,0,0.12); display:block;">
     </div>
-    <figcaption style="margin-top:8px; font-size:0.95em; color:#333;"><strong>Research1</strong><br><span style="color:#666; font-size:0.9em;">轨迹与 DH 验证示例</span></figcaption>
+    <figcaption style="margin-top:8px; font-size:0.95em; color:#333;"><strong>Research1</strong></figcaption>
   </figure>
 
   <figure style="flex:1 1 420px; max-width:560px; text-align:center; margin:0;">
     <div style="width:100%;">
       <img src="docs/video/research2.gif" alt="research2 demo" style="width:100%; height:auto; border-radius:8px; border:1px solid #e6e6e6; box-shadow:0 6px 20px rgba(0,0,0,0.12); display:block;">
     </div>
-    <figcaption style="margin-top:8px; font-size:0.95em; color:#333;"><strong>Research2</strong><br><span style="color:#666; font-size:0.9em;">文本→轮廓→轨迹流程</span></figcaption>
+    <figcaption style="margin-top:8px; font-size:0.95em; color:#333;"><strong>Research2</strong></figcaption>
   </figure>
 </div>
 
